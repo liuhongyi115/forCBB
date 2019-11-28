@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.taiji.cloudmp.mhpt.modules.resourcemanage.repository.MiddlewareRepository">
+	<resultMap id="BaseResultMap"
+		type="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.Middleware">
+		<result column="id" property="id"></result>
+		<result column="servicestandard_id" property="servicestandardId"></result>
+		<result column="service_name" property="serviceName"></result>
+		<result column="service_order" property="serviceOrder"></result>
+		<result column="service_explain" property="serviceExplain"></result>
+		<result column="resource_ctime" property="resourceCtime"></result>
+		<result column="resource_utime" property="resourceUtime"></result>
+		<result column="cloud_vendor" property="cloudVendor"></result>
+		<result column="cloud_services_kind" property="cloudServicesKind"></result>
+		<result column="type" property="type"></result>
+		<result column="corr_version" property="corrVersion"></result>
+		<result column="service_kind" property="serviceKind"></result>
+		<result column="host_resource" property="hostResource"></result>
+	</resultMap>
+	<sql id="all_column">
+		id,servicestandard_id,service_name,service_order,service_explain,resource_ctime,resource_utime,cloud_vendor,cloud_services_kind,type,corr_version,
+		service_kind,host_resource
+	</sql>
+	<sql id="where_clause">
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="cloudVendor!='' and cloudVendor!= null ">
+				and cloud_vendor like CONCAT(CONCAT('%', #{cloudVendor}),'%')
+			</if>
+			<if test="serviceExplain!='' and serviceExplain!= null ">
+				and service_explain like CONCAT(CONCAT('%', #{serviceExplain}),'%')
+			</if>
+			<if test="type!='' and type!= null ">
+				and type = #{type}
+			</if>
+			<if test="corr_version!='' and corr_version!= null ">
+				and corr_version = #{corr_version}
+			</if>
+		</where>
+	</sql>
+
+	<select id="MiddlewareListCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(1)
+		from t_mhpt_resource_initialize
+		<include refid="where_clause" />
+	</select>
+
+	<select id="MiddlewareList" resultMap="BaseResultMap"
+		parameterType="Object">
+		select
+		<include refid="all_column" />
+		from t_mhpt_resource_initialize
+		<include refid="where_clause" />
+		<if test="pager.orderCondition != null and pager.orderCondition != ''">
+			${pager.orderCondition}
+		</if>
+		<if test="pager.DBPageCondition != null and pager.DBPageCondition != ''">
+			${pager.DBPageCondition}
+		</if>
+	</select>
+
+	<insert id="createHostStandard" parameterType="Object">
+		insert into t_mhpt_resource_initialize
+		(<include refid="all_column" />)
+		values
+		(#{id},#{servicestandardId},#{serviceName},#{serviceOrder},#{serviceExplain},#{resourceCtime},#{resourceUtime},#{cloudVendor},
+		#{cloudServicesKind},#{type},#{corrVersion},#{serviceKind},#{hostResource})
+	</insert>
+
+	<update id="updateHostStandard" parameterType="Object">
+		update t_mhpt_resource_initialize set
+		servicestandard_id=#{servicestandardId},service_name=#{serviceName},service_order=#{serviceOrder},service_explain=#{serviceExplain},
+		resource_ctime=#{resourceCtime},resource_utime=#{resourceUtime},cloud_vendor=#{cloudVendor},cloud_services_kind=#{cloudServicesKind},
+		type=#{type},corr_version=#{corrVersion},service_kind=#{serviceKind},host_resource=#{hostResource}
+		where id = #{id}
+	</update>
+
+	<delete id="deleteHostStandard" parameterType="Object">
+		delete from t_mhpt_resource_initialize where id in
+		<foreach item="item" index="index" collection="array" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<select id="findById" parameterType="java.lang.String">
+		select
+		<include refid="all_column" />
+		from t_mhpt_resource_initialize where id=#{id}
+	</select>
+</mapper>

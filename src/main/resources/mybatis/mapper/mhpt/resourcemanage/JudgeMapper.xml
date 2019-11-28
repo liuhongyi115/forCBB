@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.taiji.cloudmp.mhpt.modules.resourcemanage.repository.JudgeRepository">
+	<resultMap id="Judge"
+		type="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.Judge">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="serial_number" property="serialNumber" />
+	</resultMap>
+
+	<sql id="columns">
+		id, name, serial_number
+	</sql>
+
+	<sql id="dynamicWhere">
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="name != null">
+				and name like CONCAT(CONCAT('%', #{name}),'%')
+			</if>
+			<if test="serialNumber != null">
+				and serial_number like CONCAT(CONCAT('%',
+				#{serialNumber}),'%')
+			</if>
+		</where>
+	</sql>
+
+	<insert id="add"
+		parameterType="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.Judge"
+		keyProperty="id">
+		insert into t_mhpt_judge
+		(<include refid="columns" />)
+		values ( #{id}, #{name}, #{serialNumber} )
+	</insert>
+
+	<update id="update"
+		parameterType="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.Judge">
+		update t_mhpt_judge set
+		name = #{name},
+		serial_number = #{serialNumber}
+		where id = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from t_mhpt_judge
+		where id in
+		<foreach item="item" index="index" collection="array" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<select id="findAll"
+		parameterType="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.Judge"
+		resultMap="Judge">
+		select
+		<include refid="columns" />
+		from t_mhpt_judge
+		<include refid="dynamicWhere" />
+		<if test="pager.DBPageCondition != null and pager.DBPageCondition != ''">
+			${pager.DBPageCondition}
+		</if>
+	</select>
+
+	<select id="findById" parameterType="java.lang.String"
+		resultMap="Judge">
+		select
+		<include refid="columns" />
+		from t_mhpt_judge
+		where id = #{id}
+	</select>
+
+	<select id="findByName" parameterType="java.lang.String"
+		resultMap="Judge">
+		select
+		<include refid="columns" />
+		from t_mhpt_judge
+		where name = #{name}
+	</select>
+
+	<select id="findTotalCount" resultType="java.lang.Long">
+		select count(1)
+		FROM t_mhpt_judge
+		<include refid="dynamicWhere" />
+	</select>
+</mapper>

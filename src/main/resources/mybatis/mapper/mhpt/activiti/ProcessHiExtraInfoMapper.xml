@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taiji.cloudmp.mhpt.modules.activiti.repository.processHiExtraInfoRepository">
+	<!-- Result Map -->
+	<resultMap id="BaseResultMap" type="com.taiji.cloudmp.mhpt.modules.activiti.domain.ProcessHiExtraInfo">
+		<result column="id" property="id" />
+		<result column="proc_inst_id" property="procInstId" />
+		<result column="hi_task_id" property="hiTaskId" />
+		<result column="suggestion" property="suggestion" />
+	</resultMap>
+
+
+	<!-- sys_menu table all fields -->
+	<sql id="Base_Column_List">
+		t.id,t.proc_inst_id,t.hi_task_id,t.suggestion
+	</sql>
+
+    <select id="getHistoryOfProcess" resultType="java.util.Map"
+            parameterType="Object">
+      SELECT task.ASSIGNEE_ assignee ,task.START_TIME_ startTime, task.NAME_ actName,t.suggestion FROM act_hi_taskinst task LEFT JOIN process_hi_extra_info t  ON task.ID_ = t.hi_task_id WHERE task.PROC_INST_ID_ = #{procInstId}
+		ORDER BY task.START_TIME_
+    </select>
+
+
+
+
+	<insert id="save" parameterType="Object">
+		insert into
+		process_hi_extra_info(id,proc_inst_id,hi_task_id,suggestion)
+		values(#{id},#{procInstId},#{hiTaskId},#{suggestion})
+	</insert>
+
+
+</mapper>   

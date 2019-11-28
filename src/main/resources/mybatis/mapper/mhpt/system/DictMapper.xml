@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.taiji.cloudmp.mhpt.modules.system.repository.DictRepository">
+	<!-- Result Map -->
+	<resultMap id="BaseResultMap"
+		type="com.taiji.cloudmp.mhpt.modules.system.domain.Dict">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="remark" property="remark" />
+		<result column="pid" property="pid" />
+	</resultMap>
+
+
+	<!-- sys_menu table all fields -->
+	<sql id="Base_Column_List">
+		id,name,remark,pid
+	</sql>
+
+	<sql id="little_Column_List">
+		id,name
+	</sql>
+
+	<!-- 查询条件 -->
+	<sql id="Example_Where_Clause">
+		where 1=1
+		<trim suffixOverrides=",">
+			<if test="ids != null">
+				and id in
+				<foreach collection="ids" index="index" item="item" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="name != null and name != ''">
+				and name like CONCAT(CONCAT('%', #{name}),'%')
+			</if>
+		</trim>
+	</sql>
+
+<!--	新增-->
+	<insert id="save" parameterType="Object">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into
+		t_cloudmp_dict(name,remark,pid)
+		values(#{name},#{remark},#{pid})
+	</insert>
+
+<!--	修改-->
+	<update id="update" parameterType="Object">
+		update t_cloudmp_dict set
+		<trim suffixOverrides=",">
+			<if test="remark != null  and remark != '' ">
+				remark=#{remark},
+			</if>
+			<if test="pid != null ">
+				pid=#{pid},
+			</if>
+			<if test="name != null  and name != '' ">
+				name=#{name}
+			</if>
+		</trim>
+		where id=#{id}
+	</update>
+
+<!--	通过ID删除-->
+	<delete id="deleteById" parameterType="Object">
+		delete 	 from t_cloudmp_dict where id = #{id}
+	</delete>
+
+<!--	通过ID查询-->
+	<select id="findById" resultMap="BaseResultMap"
+		parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		FROM t_cloudmp_dict
+		where id=#{id}
+	</select>
+
+<!--	查询全部-->
+	<select id="findAll" resultMap="BaseResultMap"
+		parameterType="Object">
+		select
+		<include refid="Base_Column_List" />
+		FROM t_cloudmp_dict
+		<where>
+			<if test="name != null">
+				name  like concat(concat('%', #{name}),'%')
+			</if>
+		</where>
+	</select>
+
+<!--    通过id查询名称-->
+	<select id="findNameById" resultType="java.lang.String"
+			parameterType="java.lang.Long">
+		select
+		name
+		FROM t_cloudmp_dict t  where id=#{id}
+	</select>
+
+</mapper>

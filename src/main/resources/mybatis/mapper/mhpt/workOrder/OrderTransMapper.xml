@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taiji.cloudmp.mhpt.modules.workOrder.repository.OrderTransRepository">
+	<resultMap id="OrderTrans" type="com.taiji.cloudmp.mhpt.modules.workOrder.domain.OrderTrans">
+		<id column="id" property="id" />
+		<result column="base_info_id" property="baseInfoId" />
+		<result column="state" property="state" />
+		<result column="state_desc" property="stateDesc" />
+		<result column="work_order_type" property="workOrderType" />
+	</resultMap>
+ 	
+ 	<sql id="columns" >
+        id, base_info_id, state, state_desc, work_order_type
+    </sql>
+    
+    <sql id="dynamicWhere">
+		<where>
+			<if test="id != null">
+				and id = #{id}
+        	</if>
+        </where>
+	</sql>
+    
+
+ 	
+ 	<update id="update" parameterType="com.taiji.cloudmp.mhpt.modules.workOrder.domain.OrderTrans">
+		update t_mhpt_order_trans set 
+			id = #{id},
+			base_info_id = #{baseInfoId},
+			state = #{state},
+			state_desc = #{stateDesc},
+			work_order_type = #{workOrderType},
+			id = #{id}
+		where id = #{id}
+	</update>
+ 	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from t_mhpt_order_trans 
+		where id = #{id}
+	</delete>
+ 
+	<select id="findAll" parameterType="com.taiji.cloudmp.mhpt.modules.workOrder.domain.OrderTrans" resultMap="OrderTrans">
+		select <include refid="columns" />
+		from t_mhpt_order_trans
+		<include refid="dynamicWhere" />
+		<if test="pager.DBPageCondition != null and pager.DBPageCondition != ''">
+			${pager.DBPageCondition}
+		</if>
+	</select>
+ 
+	<select id="findById" parameterType="java.lang.String" resultMap="OrderTrans">
+		select <include refid="columns" />
+		from t_mhpt_order_trans
+		where id = #{id}
+	</select>
+ 	
+ 	<select id="findTotalCount" resultType="java.lang.Long" >
+		select count(1)
+		FROM t_mhpt_order_trans
+		<include refid="dynamicWhere" />
+	</select>
+	
+	<!-- =================== 
+	<insert id="add" parameterType="com.taiji.cloudmp.mhpt.modules.workOrder.domain.OrderTrans">
+  		insert into t_mhpt_order_trans 
+  		values 
+  		( #{id}, #{baseInfoId}, #{state}, #{stateDesc}, #{workOrderType} )
+	</insert>
+	
+	<delete id="deleteByBaseInfoId" parameterType="java.lang.String">
+		delete from t_mhpt_order_trans 
+		where base_info_id = #{baseInfoId}
+	</delete>
+	
+	<select id="findByBaseInfoId" parameterType="java.lang.String" resultMap="OrderTrans">
+		select <include refid="columns" />
+		from t_mhpt_order_trans
+		where base_info_id = #{baseInfoId}
+	</select>
+	
+-->
+</mapper>

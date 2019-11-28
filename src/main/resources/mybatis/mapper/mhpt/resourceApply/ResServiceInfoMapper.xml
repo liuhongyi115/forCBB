@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taiji.cloudmp.mhpt.modules.resourceApply.repository.ResServiceInfoRepository">
+	<resultMap id="ResServiceInfo" type="com.taiji.cloudmp.mhpt.modules.resourceApply.domain.ResServiceInfo">
+		<id column="id" property="id" />
+		<result column="banjian_id" property="banjianId" />
+		<result column="base_info_id" property="baseInfoId" />
+		<result column="service_id" property="serviceId" />
+		<result column="service_name" property="serviceName" />
+		<result column="service_classify" property="serviceClassify" />
+		<result column="service_net" property="serviceNet" />
+		<result column="service_type" property="serviceType" />
+		<result column="service_num" property="serviceNum" />
+		<result column="service_unit" property="serviceUnit" />
+		<result column="service_order" property="serviceOrder" />
+		<result column="service_ctime" property="serviceCtime" />
+		<result column="service_utime" property="serviceUtime" />
+		<result column="is_add" property="isAdd" />
+		<result column="cloud_services_kind" property="cloudServicesKind" />
+		<result column="servicecatalog_kind" property="servicecatalogKind" />
+		<result column="service_money" property="serviceMoney" />
+		<result column="service_sum_money" property="serviceSumMoney" />
+		<result column="service_comment" property="serviceComment" />
+		<result column="is_update" property="isUpdate" />
+		<result column="host_id" property="hostId" />
+		<result column="prev_service_id" property="prevServiceId" />
+		<result column="state" property="state" />
+	</resultMap>
+ 	
+ 	<sql id="columns" >
+        id, banjian_id, base_info_id, service_id, service_name, service_classify, service_net, service_type, service_num, service_unit, service_order, service_ctime, service_utime, is_add, cloud_services_kind, servicecatalog_kind, service_money, service_sum_money, service_comment, is_update, host_id, prev_service_id, state
+    </sql>
+    
+    <sql id="dynamicWhere">
+		<where>
+			<if test="id != null">
+				and id = #{id}
+        	</if>
+        </where>
+	</sql>
+    
+	<insert id="add" parameterType="com.taiji.cloudmp.mhpt.modules.resourceApply.domain.ResServiceInfo">
+  		insert into t_mhpt_res_service_info 
+  		values 
+  		( #{id}, #{banjianId}, #{baseInfoId}, #{serviceId}, #{serviceName}, #{serviceClassify}, #{serviceNet}, #{serviceType}, #{serviceNum}, #{serviceUnit}, #{serviceOrder}, #{serviceCtime}, #{serviceUtime}, #{isAdd}, #{cloudServicesKind}, #{servicecatalogKind}, #{serviceMoney}, #{serviceSumMoney}, #{serviceComment}, #{isUpdate}, #{hostId}, #{prevServiceId}, #{state} )
+	</insert>
+ 	
+ 	<update id="update" parameterType="com.taiji.cloudmp.mhpt.modules.resourceApply.domain.ResServiceInfo">
+		update t_mhpt_res_service_info set 
+			id = #{id},
+			banjian_id = #{banjianId},
+			base_info_id = #{baseInfoId},
+			service_id = #{serviceId},
+			service_name = #{serviceName},
+			service_classify = #{serviceClassify},
+			service_net = #{serviceNet},
+			service_type = #{serviceType},
+			service_num = #{serviceNum},
+			service_unit = #{serviceUnit},
+			service_order = #{serviceOrder},
+			service_ctime = #{serviceCtime},
+			service_utime = #{serviceUtime},
+			is_add = #{isAdd},
+			cloud_services_kind = #{cloudServicesKind},
+			servicecatalog_kind = #{servicecatalogKind},
+			service_money = #{serviceMoney},
+			service_sum_money = #{serviceSumMoney},
+			service_comment = #{serviceComment},
+			is_update = #{isUpdate},
+			host_id = #{hostId},
+			prev_service_id = #{prevServiceId},
+			state = #{state},
+			id = #{id}
+		where id = #{id}
+	</update>
+ 	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from t_mhpt_res_service_info 
+		where id = #{id}
+	</delete>
+ 
+	<select id="findAll" parameterType="com.taiji.cloudmp.mhpt.modules.resourceApply.domain.ResServiceInfo" resultMap="ResServiceInfo">
+		select <include refid="columns" />
+		from t_mhpt_res_service_info
+		<include refid="dynamicWhere" />
+		<if test="pager.DBPageCondition != null and pager.DBPageCondition != ''">
+			${pager.DBPageCondition}
+		</if>
+	</select>
+ 
+	<select id="findById" parameterType="java.lang.String" resultMap="ResServiceInfo">
+		select <include refid="columns" />
+		from t_mhpt_res_service_info
+		where id = #{id}
+	</select>
+ 	
+ 	<select id="findTotalCount" resultType="java.lang.Long" >
+		select count(1)
+		FROM t_mhpt_res_service_info
+		<include refid="dynamicWhere" />
+	</select>
+</mapper>

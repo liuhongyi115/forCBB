@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taiji.cloudmp.mhpt.modules.workOrder.repository.OrderProcRepository">
+	<resultMap id="OrderProc" type="com.taiji.cloudmp.mhpt.modules.workOrder.domain.OrderProc">
+		<id column="id" property="id" />
+		<result column="base_info_id" property="baseInfoId" />
+		<result column="state" property="state" />
+		<result column="state_desc" property="stateDesc" />
+		<result column="work_order_type" property="workOrderType" />
+		<result column="suggestion" property="suggestion" />
+		<result column="manager_id" property="managerId" />
+		<result column="manager_name" property="managerName" />
+	</resultMap>
+ 	
+ 	<sql id="columns" >
+        id, base_info_id, state, state_desc, work_order_type, suggestion, manager_id, manager_name
+    </sql>
+    
+    <sql id="dynamicWhere">
+		<where>
+			<if test="id != null">
+				and id = #{id}
+        	</if>
+        </where>
+	</sql>
+    
+
+ 	
+ 	<update id="update" parameterType="com.taiji.cloudmp.mhpt.modules.workOrder.domain.OrderProc">
+		update t_mhpt_order_proc set 
+			id = #{id},
+			base_info_id = #{baseInfoId},
+			state = #{state},
+			state_desc = #{stateDesc},
+			work_order_type = #{workOrderType},
+			suggestion = #{suggestion},
+			manager_id = #{managerId},
+			manager_name = #{managerName},
+			id = #{id}
+		where id = #{id}
+	</update>
+ 	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from t_mhpt_order_proc 
+		where id = #{id}
+	</delete>
+ 
+	<select id="findAll" parameterType="com.taiji.cloudmp.mhpt.modules.workOrder.domain.OrderProc" resultMap="OrderProc">
+		select <include refid="columns" />
+		from t_mhpt_order_proc
+		<include refid="dynamicWhere" />
+		<if test="pager.DBPageCondition != null and pager.DBPageCondition != ''">
+			${pager.DBPageCondition}
+		</if>
+	</select>
+ 
+	<select id="findById" parameterType="java.lang.String" resultMap="OrderProc">
+		select <include refid="columns" />
+		from t_mhpt_order_proc
+		where id = #{id}
+	</select>
+ 	
+ 	<select id="findTotalCount" resultType="java.lang.Long" >
+		select count(1)
+		FROM t_mhpt_order_proc
+		<include refid="dynamicWhere" />
+	</select>
+	 
+	<!-- =========== 
+	<insert id="add" parameterType="com.taiji.cloudmp.mhpt.modules.workOrder.domain.OrderProc">
+  		insert into t_mhpt_order_proc 
+  		values 
+  		( #{id}, #{baseInfoId}, #{state}, #{stateDesc}, #{workOrderType}, #{suggestion}, #{managerId}, #{managerName} )
+	</insert>
+	
+	
+	<delete id="deleteByBaseInfoId" parameterType="java.lang.String">
+		delete from t_mhpt_order_proc 
+		where base_info_id = #{baseInfoId}
+	</delete>
+	
+-->
+</mapper>

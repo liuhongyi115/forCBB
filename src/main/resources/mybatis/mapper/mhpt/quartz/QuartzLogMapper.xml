@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taiji.cloudmp.mhpt.modules.quartz.repository.QuartzLogRepository" >
+    <resultMap id="QuartzLog" type="com.taiji.cloudmp.mhpt.modules.quartz.domain.QuartzLog" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="job_name" property="jobName" jdbcType="VARCHAR" />
+        <result column="bean_name" property="beanName" jdbcType="VARCHAR" />
+        <result column="method_name" property="methodName" jdbcType="VARCHAR"/>
+        <result column="params" property="params" jdbcType="VARCHAR" />
+        <result column="cron_expression" property="cronExpression" jdbcType="VARCHAR" />
+        <result column="is_success" property="isSuccess" jdbcType="BIT" />
+        <result column="exception_detail" property="exceptionDetail" jdbcType="LONGVARCHAR" />
+        <result column="time" property="time" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="columns" >
+        id, job_name, bean_name, method_name, params, cron_expression, is_success, exception_detail, time, create_time
+    </sql>
+    
+	<sql id="dynamicWhere" >
+		<where>
+        	<if test="jobName != null">
+        		job_name like concat(concat('%', #{jobName}),'%')
+        	</if>
+        	<if test="isSuccess != null and isSuccess == true">
+        		and is_success = 1
+        	</if>
+        	<if test="isSuccess != null and isSuccess == false">
+        		and is_success = 0
+        	</if>
+        </where>
+	</sql>
+	
+	<insert id="add" parameterType="com.taiji.cloudmp.mhpt.modules.quartz.domain.QuartzLog" >
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+ 			SELECT LAST_INSERT_ID()
+  		</selectKey>
+    	INSERT INTO quartz_log ( job_name, bean_name, method_name, params, cron_expression, is_success, exception_detail, time, create_time) 
+        VALUES (#{jobName}, #{beanName}, #{methodName}, #{params}, #{cronExpression}, #{isSuccess}, #{exceptionDetail}, #{time}, #{createTime})
+    </insert>
+	
+    <select id="findAll" parameterType="com.taiji.cloudmp.mhpt.modules.quartz.service.dto.QuartzJobQueryCriteria" resultMap="QuartzLog" >
+    	SELECT <include refid="columns" />
+        FROM quartz_log
+        <include refid="dynamicWhere" />
+       	<if test="pager.orderCondition != null and pager.orderCondition != ''">
+			${pager.orderCondition}
+		</if>
+		<if test="pager.DBPageCondition != null and pager.DBPageCondition != ''">
+			${pager.DBPageCondition}
+		</if>
+    </select>
+	
+	<select id="findTotalCount" resultType="java.lang.Long" >
+		select count(1)
+		FROM quartz_log 
+		<include refid="dynamicWhere" />
+	</select>
+</mapper>

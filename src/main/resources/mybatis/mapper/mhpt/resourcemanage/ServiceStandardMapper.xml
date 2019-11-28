@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taiji.cloudmp.mhpt.modules.resourcemanage.repository.ServiceStandardRepository">
+	<resultMap id="ServiceStandard" type="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.ServiceStandard">
+		<id column="id" property="id" />
+		<result column="service_name" property="serviceName" />
+		<result column="service_kind" property="serviceKind" />
+		<result column="service_network" property="serviceNetwork" />
+		<result column="service_type" property="serviceType" />
+		<result column="service_is_store" property="serviceIsStore" />
+		<result column="service_unit" property="serviceUnit" />
+		<result column="service_order" property="serviceOrder" />
+		<result column="service_explain" property="serviceExplain" />
+		<result column="status" property="State" />
+		<result column="service_ctime" property="serviceCtime" />
+		<result column="service_utime" property="serviceUtime" />
+		<result column="advantage1" property="advantage1" />
+		<result column="advantage2" property="advantage2" />
+		<result column="advantage3" property="advantage3" />
+		<result column="advantage4" property="advantage4" />
+		<result column="is_toll" property="isToll" />
+		<result column="service_attribute" property="serviceAttribute" />
+		<result column="service_ftype" property="serviceFtype" />
+		<result column="is_fqfw" property="isFqfw" />
+		<result column="cloud_vendor" property="cloudVendor" />
+		<result column="cloud_services_kind" property="cloudServicesKind" />
+		<result column="servicecatalog_kind" property="servicecatalogKind" />
+		<result column="quoted_price" property="quotedPrice" />
+		<result column="host_resource" property="hostResource" />
+		<result column="operating_view" property="operatingView" />
+	</resultMap>
+ 	
+ 	<sql id="columns" >
+       id, service_name, service_kind, service_network, service_type, service_is_store, service_unit, service_order, service_explain, status, 
+       service_ctime, service_utime, advantage1, advantage2, advantage3, advantage4, is_toll, service_attribute, service_ftype, is_fqfw, cloud_vendor, 
+       cloud_services_kind, servicecatalog_kind, quoted_price, host_resource, operating_view
+    </sql>
+    
+    <sql id="dynamicWhere">
+		<where>
+			<if test="id != null">
+				and id = #{id}
+        	</if>
+			<if test="serviceName != null">
+				and SERVICE_NAME like concat(concat('%', #{serviceName}),'%')
+        	</if>
+			<if test="serviceKind != null">
+				and service_kind = #{serviceKind}	 
+        	</if>
+			<if test="hostResource != null">
+				and host_resource = #{hostResource}
+        	</if>
+			<if test="cloudVendor != null">
+				and cloud_vendor = #{cloudVendor}
+        	</if>
+        	<if test="serviceExplain != null">
+				and service_explain like concat(concat('%', #{serviceExplain}),'%')
+        	</if>
+        	<if test="cloudServicesKind != null">
+				and cloud_services_kind = #{cloudServicesKind}
+        	</if>
+        	<if test="serviceNetwork != null">
+				and service_network = #{serviceNetwork}
+        	</if>
+        </where>
+	</sql>
+    
+	<insert id="add" parameterType="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.ServiceStandard">
+  		insert into t_mhpt_servicestandard 
+  		values 
+  		(#{id},#{serviceName},#{serviceKind},#{serviceNetwork},#{serviceType},#{serviceIsStore},#{serviceUnit},#{serviceOrder},#{serviceExplain},
+  		#{State},#{serviceCtime},#{serviceUtime},#{advantage1},#{advantage2},#{advantage3},#{advantage4},#{isToll},#{serviceAttribute},#{serviceFtype},
+  		#{isFqfw},#{cloudVendor},#{cloudServicesKind},#{servicecatalogKind},#{quotedPrice},#{hostResource},#{operatingView})
+	</insert>
+ 	
+ 	<update id="update" parameterType="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.ServiceStandard">
+		update t_mhpt_servicestandard set 
+				service_name = #{serviceName},
+				service_kind = #{serviceKind},
+				service_type = #{serviceType},
+				service_unit = #{serviceUnit},
+				service_explain = #{serviceExplain},
+				service_utime = #{serviceUtime},
+				is_toll = #{isToll},
+				cloud_vendor = #{cloudVendor},
+				cloud_services_kind = #{cloudServicesKind},
+				servicecatalog_kind = #{servicecatalogKind},
+				quoted_price = #{quotedPrice},
+				host_resource = #{hostResource},
+		where ID = #{id}
+	</update>
+ 	
+	<delete id="delete" parameterType="java.lang.String">
+		update t_mhpt_servicestandard set 
+		status = 1,
+		where id in 
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+             #{item}
+        </foreach>
+	</delete>
+ 
+	<select id="findAll" parameterType="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.ServiceStandard" resultMap="ServiceStandard">
+		select <include refid="columns" />
+		from t_mhpt_servicestandard
+		<include refid="dynamicWhere" />
+		<if test="pager.DBPageCondition != null and pager.DBPageCondition != ''">
+			${pager.DBPageCondition}
+		</if>
+	</select>
+ 
+	<select id="findById" parameterType="java.lang.String" resultMap="ServiceStandard">
+		select <include refid="columns" />
+		from t_mhpt_servicestandard
+		where ID = #{id}
+	</select>
+	
+	<select id="queryContent" parameterType="com.taiji.cloudmp.mhpt.modules.resourcemanage.domain.ServiceStandard" resultMap="ServiceStandard">
+	SELECT cloud_vendor,cloud_services_kind,servicecatalog_kind,service_kind FROM `t_mhpt_servicestandard` 
+	GROUP BY cloud_vendor,cloud_services_kind,servicecatalog_kind,service_kind 
+	<if test="cloudVendor != null and cloudVendor != 0 " >
+	HAVING cloud_vendor = #{cloudVendor}
+	</if>
+ 	</select>
+ 	<select id="findTotalCount"  resultType="java.lang.Long" >
+		select count(1)
+		FROM t_mhpt_servicestandard
+		<!-- <include refid="dynamicWhere" /> -->
+	</select>
+</mapper>
